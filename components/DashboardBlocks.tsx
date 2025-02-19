@@ -1,6 +1,6 @@
 import React from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card'
-import { Activity, Bot, CreditCard, File, User, Users } from 'lucide-react'
+import { Activity, BookCopy, Bot, CreditCard, File, User, Users } from 'lucide-react'
 
 const DashboardBlocks = () => {
   return (
@@ -22,7 +22,7 @@ const DashboardBlocks = () => {
         <Card>
             <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
                 <CardTitle className='text-sm font-medium'>Total Subjects Offered</CardTitle>
-                <Users className='size-4 text-muted-foreground'/>
+                <BookCopy className='size-4 text-muted-foreground'/>
             </CardHeader>
             <CardContent>
                 <h2 className='text-2xl font-bold'>

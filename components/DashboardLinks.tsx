@@ -21,19 +21,19 @@ export const dashboardLinks = [
     {
         id: 2,
         name: 'Subjects',
-        href: '/dashboard/users',
+        href: '/dashboard/subjects',
         icon: Book
     },
     {
         id: 3,
-        name: 'Vidoes',
-        href: '/dashboard/users',
+        name: 'Videos',
+        href: '/dashboard/videos',
         icon: Play
     },
     {
         id: 4,
         name: 'Quesntion Papers',
-        href: '/dashboard/users',
+        href: '/dashboard/papers',
         icon: File
     },
 ]
