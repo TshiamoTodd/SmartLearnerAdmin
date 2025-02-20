@@ -11,7 +11,7 @@ const UsersPage = () => {
       <Card className='w-full p-5 mb-2'>
         <CardDescription className='flex flex-row items-center justify-between'>
           <div>
-            <h2 className='text-2xl font-thin'>
+            <h2 className='text-2xl font-bold'>
               Users Table
             </h2>
             <p className='text-sm font-thin'>
