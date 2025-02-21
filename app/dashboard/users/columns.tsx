@@ -1,19 +1,24 @@
 "use client"
 
+import { Badge } from "@/components/ui/badge"
 import { ColumnDef } from "@tanstack/react-table"
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
-export type Payment = {
+export type User = {
   id: string
-  amount: number
-  status: "pending" | "processing" | "success" | "failed"
+  username: number
   email: string
+  role: string
 }
 
-export const columns: ColumnDef<Payment>[] = [
+export const columns: ColumnDef<User>[] = [
   {
-    accessorKey: "status",
+    accessorKey: "id",
+    header: "ID",
+  },
+  {
+    accessorKey: "username",
     header: "Name",
   },
   {
@@ -21,7 +26,10 @@ export const columns: ColumnDef<Payment>[] = [
     header: "Email",
   },
   {
-    accessorKey: "amount",
+    accessorKey: "role",
     header: "Role",
+    cell: ({row}) => {
+      return <Badge variant="outline" className='rounded-full bg-primary p-2 text-white font-light'>{row.getValue('role')}</Badge>
+    }
   },
 ]
