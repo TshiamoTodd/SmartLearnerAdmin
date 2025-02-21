@@ -74,6 +74,8 @@ const SubjectsPage = async () => {
       <Card className='w-full p-5'>
         {subjects ? <DataTable columns={columns} data={subjects} /> : <p>No subjects available</p>}
       </Card>
+
+      
       
     </div>
   )

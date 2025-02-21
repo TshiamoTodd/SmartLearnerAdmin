@@ -1,5 +1,6 @@
 "use client"
 
+import { useState } from "react"
 import { Badge } from "@/components/ui/badge"
 import { ColumnDef } from "@tanstack/react-table"
 import { MoreHorizontal } from "lucide-react"
@@ -12,9 +13,9 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Button } from "@/components/ui/button"
+import DeleteDialog from "@/components/DeleteDialog"
 
-// This type is used to define the shape of our data.
-// You can use a Zod schema here if you want.
+// Define the Subject type
 export type Subject = {
   id: string
   subjectName: number
@@ -38,18 +39,24 @@ export const columns: ColumnDef<Subject>[] = [
   {
     accessorKey: "schoolLevel",
     header: "School Level",
-    cell: ({row}) => {
-      return <Badge variant="outline" className='rounded-full bg-primary p-2 text-white font-light'>{row.getValue('schoolLevel')}</Badge>
-    }
+    cell: ({ row }) => {
+      return (
+        <Badge variant="outline" className="rounded-full bg-primary p-2 text-white font-light">
+          {row.getValue("schoolLevel")}
+        </Badge>
+      )
+    },
   },
   {
-      accessorKey: "actions",
-      header: "Actions",
-      id: "actions",
-      cell: ({ row }) => {
-        const payment = row.original
-   
-        return (
+    accessorKey: "actions",
+    header: "Actions",
+    id: "actions",
+    cell: ({ row }) => {
+      const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
+      console.log(row.getValue("id"))
+
+      return (
+        <>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" className="h-8 w-8 p-0">
@@ -59,17 +66,23 @@ export const columns: ColumnDef<Subject>[] = [
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
-              <DropdownMenuItem
-                onClick={() => {}}
-              >
-                Edit Subject
-              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => {}}>Edit Subject</DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem>Delete Subject</DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={(e) => {
+                  e.preventDefault()
+                  e.stopPropagation() // Prevent the dropdown from closing immediately
+                  setIsDeleteDialogOpen(true)
+                }}
+              >
+                <DeleteDialog title="Delete Subject"/>
+              </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
-        )
-      },
-    
-  }
+
+          {/* Render DeleteDialog outside the DropdownMenu */}
+        </>
+      )
+    },
+  },
 ]
