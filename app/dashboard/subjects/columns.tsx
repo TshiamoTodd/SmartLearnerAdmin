@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { Button } from "@/components/ui/button"
 import DeleteDialog from "@/components/DeleteDialog"
+import { redirect } from "next/navigation"
 
 // Define the Subject type
 export type Subject = {
@@ -53,20 +54,21 @@ export const columns: ColumnDef<Subject>[] = [
     id: "actions",
     cell: ({ row }) => {
       const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
-      console.log(row.getValue("id"))
+      const subject = row.getValue("subjectName") as string
+      const id = row.getValue("id") as string
 
       return (
         <>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="h-8 w-8 p-0">
+              <Button variant="secondary" className="h-8 w-8 p-0">
                 <span className="sr-only">Open menu</span>
                 <MoreHorizontal className="h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
-              <DropdownMenuItem onClick={() => {}}>Edit Subject</DropdownMenuItem>
+              <DropdownMenuItem onClick={() => {redirect(`/dashboard/subjects/${id}`)}}>Edit Subject</DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem
                 onClick={(e) => {
@@ -75,7 +77,11 @@ export const columns: ColumnDef<Subject>[] = [
                   setIsDeleteDialogOpen(true)
                 }}
               >
-                <DeleteDialog title="Delete Subject"/>
+                <DeleteDialog 
+                  title="Delete Subject"
+                  subject={subject}
+                  id={id}
+                />
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>

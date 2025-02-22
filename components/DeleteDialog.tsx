@@ -1,3 +1,4 @@
+'use client'
 import React from 'react'
 import { Button } from "@/components/ui/button"
 import {
@@ -11,12 +12,50 @@ import {
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { deleteSubject } from '@/lib/data'
+import { toast } from "sonner"
+import { redirect } from 'next/navigation'
+import { Loader2 } from 'lucide-react'
 
-const DeleteDialog = ({title}: {title: string}) => {
+
+const DeleteDialog = ({title, subject, id}: {title: string, subject: string, id: string}) => {
+  const [deleteText, setDeleteText] = React.useState('')
+  const [isOpen, setIsOpen] = React.useState(false)
+  const [isLoading, setIsLoading] = React.useState(false)
+
+  const handleDelete = async () => {
+    if(subject === deleteText) {
+      try {
+        setIsLoading(true)
+        const response = await deleteSubject(id)
+
+        if(response.success) {
+          console.log('deleted')
+          setIsOpen(false)
+          toast.success('Subject deleted successfully')
+          setIsLoading(false)
+          
+        } else if(!response.success) {
+          toast.error(response.error)
+        }
+
+
+      } catch (error) {
+        console.log('error', error)
+        toast.error('An error occurred while deleting the subject')
+      } finally {
+        setIsLoading(false)
+        redirect('/dashboard/subjects')
+      }
+
+    } else {
+      toast.error('The text you entered does not match the subject name. Please try again.')
+    }
+  }
   return (
-    <Dialog>
+    <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline" className='p-0'>{title}</Button>
+        <p className='p-0'>{title}</p>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
@@ -27,13 +66,17 @@ const DeleteDialog = ({title}: {title: string}) => {
         </DialogHeader>
         <div className="grid gap-4 py-4">
           <div className="flex flex-col items-start gap-2">
-            <Label htmlFor="name" className='text-red-500'>Type "" to confirm your delete.</Label>
-            <Input id="name" className="border border-gray-500" />
+            <Label htmlFor="name" className='text-red-500'>Type {subject} to confirm your delete.</Label>
+            <Input id="name" onChange={(e) => setDeleteText(e.target.value)} className="border border-gray-500" />
+            <Button 
+              onClick={handleDelete} 
+              variant={'destructive'}
+              className='w-full'
+            >
+              {isLoading ? <Loader2 className='size-4 animate-spin'/> : 'Delete Subject'}
+            </Button>
           </div>
         </div>
-        <DialogFooter>
-          <Button type="submit" variant={'destructive'}>Delete Subject</Button>
-        </DialogFooter>
       </DialogContent>
     </Dialog>
   )
