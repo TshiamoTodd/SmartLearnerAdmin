@@ -59,14 +59,14 @@ const CreateSubject = () => {
     const [isLoading, setIsLoading] = useState(false)
 
     // 1. Define your form.
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-        subjectName: "",
-        gradeRange: "",
-        schoolLevel: "",
-    },
-  })
+    const form = useForm<z.infer<typeof formSchema>>({
+        resolver: zodResolver(formSchema),
+        defaultValues: {
+            subjectName: "",
+            gradeRange: "",
+            schoolLevel: "",
+        },
+    })
  
   // 2. Define a submit handler.
   async function onSubmit(values: z.infer<typeof formSchema>) {

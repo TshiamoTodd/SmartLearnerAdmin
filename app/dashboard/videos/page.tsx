@@ -1,6 +1,6 @@
 import { buttonVariants } from '@/components/ui/button'
 import { Card, CardDescription } from '@/components/ui/card'
-import VideoListComponent from '@/components/VideoListComponent'
+import VideoListComponent from '@/components/VideoPlayerComponent'
 import { createClient } from '@/utils/supabase/server'
 import { CirclePlus } from 'lucide-react'
 import Link from 'next/link'

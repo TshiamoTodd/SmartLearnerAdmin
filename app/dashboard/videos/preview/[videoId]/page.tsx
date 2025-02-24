@@ -1,6 +1,6 @@
 import { buttonVariants } from '@/components/ui/button'
 import { Card, CardDescription } from '@/components/ui/card'
-import VideoListComponent from '@/components/VideoListComponent'
+import VideoPlayerComponent from '@/components/VideoPlayerComponent'
 import { extractYouTubeVideoId } from '@/utils'
 import { createClient } from '@/utils/supabase/server'
 import { CirclePlus } from 'lucide-react'
@@ -27,32 +27,17 @@ const PreviewVideoPage = async ({params}: {params: Params}) => {
         <CardDescription className='flex flex-row items-center justify-between'>
           <div>
             <h2 className='text-2xl font-semibold'>
-              Subject Videos
+              {video?.title}
             </h2>
             <p className='text-[12px] font-thin'>
-              List of all vides offered on the app
+              {video?.description}
             </p>
           </div>
-
-          <Link
-            href={'/dashboard/videos/create'}
-            className={buttonVariants()}
-          >
-            <CirclePlus className='size-4'/>
-            Add Video
-          </Link>
         </CardDescription>
       </Card>
-    <Card className='flex flex-row items-center justify-between p-3 gap-2'>
-      <VideoListComponent 
-        title={video?.title}
-        video_url={video?.video_url}
-        description={video?.description}
-      />
+    <Card className='flex items-center justify-center w-full p-5 mb-2'>
 
-      <div>
-        <iframe src={`https://www.youtube.com/embed/${extractYouTubeVideoId(video?.video_url)}?autoplay=0&origin=http://example.com&controls=0&rel=1`} width="560" height="315" allowFullScreen/>
-      </div>
+      <VideoPlayerComponent video_url={video?.video_url} />
 
     </Card>
     </>
