@@ -1,40 +1,29 @@
 import { buttonVariants } from '@/components/ui/button'
 import { Card, CardDescription } from '@/components/ui/card'
 import VideoListComponent from '@/components/VideoListComponent'
+import { extractYouTubeVideoId } from '@/utils'
 import { createClient } from '@/utils/supabase/server'
 import { CirclePlus } from 'lucide-react'
 import Link from 'next/link'
 import React from 'react'
-import { columns } from './columns'
-import { DataTable } from './data-table'
 
-type SubjectVideo = {
-  id: string
-  title: string
-  description: number
-  video_url: string
-}
 
-const VideosPage = async () => {
+type Params = Promise<{videoId: string}>
+
+const PreviewVideoPage = async ({params}: {params: Params}) => {
+  const {videoId} = await params
   const supabase = await createClient()
-  const videos: SubjectVideo[] = []
-  const  {data: videoData, error} = await supabase.from('SubjectVideos')
-  .select('video_id, title, video_url, description')
 
-  if (videoData) {
-    videoData.forEach((video: any) => {
-      videos.push({
-        id: video.video_id,
-        title: video.title,
-        description: video.description,
-        video_url: video.video_url,
-      })
-    })
-  }
-  
+  const {data: video, error} = await supabase.from('SubjectVideos')
+    .select('video_id, title, video_url, description')
+    .eq('video_id', videoId)
+    .single()
+
+  video as {title: string, video_url: string, description: string}
+
   return (
-    <div className='flex flex-col p-3 w-full'>
-      <Card className='w-full p-5 mb-2'>
+    <>
+    <Card className='w-full p-5 mb-2'>
         <CardDescription className='flex flex-row items-center justify-between'>
           <div>
             <h2 className='text-2xl font-semibold'>
@@ -54,12 +43,20 @@ const VideosPage = async () => {
           </Link>
         </CardDescription>
       </Card>
+    <Card className='flex flex-row items-center justify-between p-3 gap-2'>
+      <VideoListComponent 
+        title={video?.title}
+        video_url={video?.video_url}
+        description={video?.description}
+      />
 
-      <Card className='w-full p-5'>
-        {videos ? <DataTable columns={columns} data={videos} /> : <p>No subjects available</p>}
-      </Card>
-    </div>
+      <div>
+        <iframe src={`https://www.youtube.com/embed/${extractYouTubeVideoId(video?.video_url)}?autoplay=0&origin=http://example.com&controls=0&rel=1`} width="560" height="315" allowFullScreen/>
+      </div>
+
+    </Card>
+    </>
   )
 }
 
-export default VideosPage
+export default PreviewVideoPage
