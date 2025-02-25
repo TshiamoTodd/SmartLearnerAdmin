@@ -9,7 +9,7 @@ import { createClient } from '@/utils/supabase/server'
 const UsersPage = async () => {
   const supabase = await createClient()
 
-  const { data: users, error } = await supabase.from('User').select('id, email, username, role')
+  const { data: users, error } = await supabase.from('User').select('id, email, username, role ').eq('role', 'Student')
 
   return (
     <div className='flex flex-col p-3 w-full'>
