@@ -15,7 +15,7 @@ const FileExplorer = ({ data }: { data: any }) => {
     const [selectedFolders, setSelectedFolders] = React.useState<string[]>([])
 
     // Function to handle opening folders
-    onst handleOpenFolder = async (folderName: string, level: number) => {
+    const handleOpenFolder = async (folderName: string, level: number) => {
         try {
             const newSelectedFolders = [...selectedFolders.slice(0, level), folderName]; // Ensure correct path selection
             const newPath = newSelectedFolders.join('/');
