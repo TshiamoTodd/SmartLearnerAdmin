@@ -259,3 +259,47 @@ export const deleteSubjectVideo = async (id: string) => {
     }
   }
 }
+
+export const getSubFolders = async (folder: any, parentFolder?: string) => {
+  const supabase = await createClient()
+  try {
+
+    if (parentFolder) {
+      const {data, error} = await supabase.storage.from('pdfBucket').list(`${parentFolder}/${folder.name}`, {
+        limit: 100,
+        offset: 0,
+        sortBy: { column: 'name', order: 'asc' },
+      })
+      if (error) {
+        throw error
+      }
+
+      return {
+        success: true,
+        data
+      }
+    }
+
+    const {data, error} = await supabase.storage.from('pdfBucket').list(`${folder}`, {
+      limit: 100,
+      offset: 0,
+      sortBy: { column: 'name', order: 'asc' },
+    })
+    if (error) {
+      throw error
+    }
+
+    console.log({data})
+
+    return {
+      success: true,
+      data
+    }
+  } catch (error: any) {
+    console.error(error)
+    return {
+      success: false,
+      error: error.message
+    }
+  }
+}
