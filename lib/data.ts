@@ -191,4 +191,71 @@ export const addSubjectVideo = async (video: {title: string, description: string
     }
   }
 }
-  
+
+export const updateSubjectVideo = async (video: {videoId: any, title: string, description: string, videoUrl: string, subjectId: any}) => {
+  const supabase = await createClient()
+  try {
+    const {data: subjectId, error: subjectIdErr} = await supabase.from('Subject')
+    .select('subject_id')
+    .eq('subject_id', video.subjectId)
+    .single()
+
+    if (subjectIdErr) {
+      return {
+        success: false,
+        error: subjectIdErr.message
+      }
+    }
+
+    if (!subjectId) {
+      return {
+        success: false,
+        error: 'Subject not found'
+      }
+    }
+
+    const {data, error} = await supabase.from('SubjectVideos').update({
+      title: video.title,
+      description: video.description,
+      video_url: video.videoUrl,
+      subject_id: subjectId.subject_id
+    }).eq('video_id', video.videoId)
+    if (error) {
+      throw error
+    }
+
+    return {
+      success: true,
+      data
+    }
+    
+  } catch (error: any) {
+    console.log('error', error) 
+    return {
+      success: false,
+      error: error.message
+    }
+  }
+}
+
+export const deleteSubjectVideo = async (id: string) => {
+  const supabase = await createClient()
+  try {
+    const {data, error} = await supabase.from('SubjectVideos').delete().eq('video_id', id)
+    if (error) {
+      throw error
+    }
+
+    return {
+      success: true,
+      data
+    }
+    
+  } catch (error: any) {
+    console.log('error', error) 
+    return {
+      success: false,
+      error: error.message
+    }
+  }
+}

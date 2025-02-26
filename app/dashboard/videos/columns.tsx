@@ -13,8 +13,8 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Button } from "@/components/ui/button"
-import DeleteDialog from "@/components/DeleteDialog"
 import { redirect } from "next/navigation"
+import DeleteVideoDialog from "@/components/DeleteVideoDialog"
 
 // Define the Subject type
 export type SubjectVideo = {
@@ -58,7 +58,7 @@ export const columns: ColumnDef<SubjectVideo>[] = [
     id: "actions",
     cell: ({ row }) => {
       const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
-      const subject = row.getValue("title") as string
+      const videoTitle = row.getValue("title") as string
       const id = row.getValue("id") as string
 
       return (
@@ -73,7 +73,7 @@ export const columns: ColumnDef<SubjectVideo>[] = [
             <DropdownMenuContent align="end">
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
               <DropdownMenuItem onClick={() => {redirect(`/dashboard/videos/preview/${id}`)}}>Preview Video</DropdownMenuItem>
-              <DropdownMenuItem onClick={() => {redirect(`/dashboard/subjects/${id}`)}}>Edit Video</DropdownMenuItem>
+              <DropdownMenuItem onClick={() => {redirect(`/dashboard/videos/${id}`)}}>Edit Video</DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem
                 onClick={(e) => {
@@ -82,9 +82,9 @@ export const columns: ColumnDef<SubjectVideo>[] = [
                   setIsDeleteDialogOpen(true)
                 }}
               >
-                <DeleteDialog 
+                <DeleteVideoDialog 
                   title="Delete Video"
-                  subject={subject}
+                  video={videoTitle}
                   id={id}
                 />
               </DropdownMenuItem>
