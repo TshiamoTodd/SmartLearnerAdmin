@@ -13,48 +13,52 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Button } from "@/components/ui/button"
-import DeleteDialog from "@/components/DeleteDialog"
 import { redirect } from "next/navigation"
+import DeleteVideoDialog from "@/components/DeleteVideoDialog"
 
 // Define the Subject type
-export type Subject = {
+export type SubjectVideo = {
   id: string
-  subjectName: number
-  gradeRange: string
-  schoolLevel: string
+  title: string
+  description: number
+  video_url: string
 }
 
-export const columns: ColumnDef<Subject>[] = [
+export const columns: ColumnDef<SubjectVideo>[] = [
   {
     accessorKey: "id",
-    header: "ID",
+    header: "Id",
   },
   {
-    accessorKey: "subjectName",
-    header: "Subject",
+    accessorKey: "title",
+    header: "Title",
   },
   {
-    accessorKey: "gradeRange",
-    header: "Grade Range",
+    accessorKey: "description",
+    header: "Description",
   },
   {
-    accessorKey: "schoolLevel",
-    header: "School Level",
-    cell: ({ row }) => {
-      return (
-        <Badge variant="outline" className="rounded-full bg-primary p-2 text-white font-light">
-          {row.getValue("schoolLevel")}
-        </Badge>
-      )
-    },
+    accessorKey: "video_url",
+    header: "Video URL",
   },
+  // {
+  //   accessorKey: "subject",
+  //   header: "Subject",
+  //   cell: ({ row }) => {
+  //     return (
+  //       <Badge variant="outline" className="rounded-full bg-primary p-2 text-white font-light">
+  //         {row.getValue("schoolLevel")}
+  //       </Badge>
+  //     )
+  //   },
+  // },
   {
     accessorKey: "actions",
     header: "Actions",
     id: "actions",
     cell: ({ row }) => {
       const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
-      const subject = row.getValue("subjectName") as string
+      const videoTitle = row.getValue("title") as string
       const id = row.getValue("id") as string
 
       return (
@@ -68,7 +72,8 @@ export const columns: ColumnDef<Subject>[] = [
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
-              <DropdownMenuItem onClick={() => {redirect(`/dashboard/subjects/${id}`)}}>Edit Subject</DropdownMenuItem>
+              <DropdownMenuItem onClick={() => {redirect(`/dashboard/videos/preview/${id}`)}}>Preview Video</DropdownMenuItem>
+              <DropdownMenuItem onClick={() => {redirect(`/dashboard/videos/${id}`)}}>Edit Video</DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem
                 onClick={(e) => {
@@ -77,9 +82,9 @@ export const columns: ColumnDef<Subject>[] = [
                   setIsDeleteDialogOpen(true)
                 }}
               >
-                <DeleteDialog 
-                  title="Delete Subject"
-                  subject={subject}
+                <DeleteVideoDialog 
+                  title="Delete Video"
+                  video={videoTitle}
                   id={id}
                 />
               </DropdownMenuItem>

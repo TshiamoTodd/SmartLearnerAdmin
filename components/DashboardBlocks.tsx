@@ -6,7 +6,7 @@ import { createClient } from '@/utils/supabase/server'
 const DashboardBlocks = async () => {
     const supabase = await createClient()
 
-    const { data: users, error } = await supabase.from('User').select('email, username, role')
+    const { data: users, error } = await supabase.from('User').select('email, username, role').eq('role', 'Student')
     const userCount = users ? users.length : 0
 
     const { data: subjects } = await supabase.from('Subject').select('subject_name')

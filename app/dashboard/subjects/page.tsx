@@ -18,7 +18,7 @@ const SubjectsPage = async () => {
   const supabase = await createClient()
   const subjects: Subject[] = []
 
-  const generateGradeRange = (gradeRange: string) => {
+  const swapGradeRange = (gradeRange: string) => {
     switch (gradeRange) {
       case '1':
         return 'Grade 1 - 3'
@@ -42,7 +42,7 @@ const SubjectsPage = async () => {
       subjects.push({
         id: subject.subject_id,
         subjectName: subject.subject_name,
-        gradeRange: generateGradeRange(subject.grade_range),
+        gradeRange: swapGradeRange(subject.grade_range),
         schoolLevel: subject.school_level === '1' ? 'Primary' : 'Secondary'
       })
     })
@@ -74,6 +74,8 @@ const SubjectsPage = async () => {
       <Card className='w-full p-5'>
         {subjects ? <DataTable columns={columns} data={subjects} /> : <p>No subjects available</p>}
       </Card>
+
+      
       
     </div>
   )

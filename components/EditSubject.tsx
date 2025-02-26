@@ -1,4 +1,5 @@
-"use client"
+'use client'
+
 import React, { useState } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card'
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -25,9 +26,16 @@ import {
   
 
 import { z } from "zod"
-import { addSubject } from '@/lib/data'
 import { Loader2 } from 'lucide-react'
 import { redirect } from 'next/navigation'
+import { updateSubject } from '@/lib/data'
+
+interface EditSubjectProps {
+    id: string
+    subjectName: string
+    gradeRange: string
+    schoolLevel: string
+}
 
 const gradeRanges = [
     { value: "1", label: "Grade 1-3" },
@@ -54,45 +62,51 @@ const formSchema = z.object({
     }),
 })
 
-
-const CreateSubject = () => {
+const EditSubject = ({id, subjectName, schoolLevel, gradeRange}: EditSubjectProps) => {
     const [isLoading, setIsLoading] = useState(false)
-
+    
     // 1. Define your form.
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
-            subjectName: "",
-            gradeRange: "",
-            schoolLevel: "",
+            subjectName: subjectName,
+            gradeRange: gradeRange,
+            schoolLevel: schoolLevel,
         },
     })
- 
-  // 2. Define a submit handler.
-  async function onSubmit(values: z.infer<typeof formSchema>) {
-    try {
-        setIsLoading(true)
-        const response = await addSubject(values)
-        
-        if (response.success) {
+
+    async function onSubmit(values: z.infer<typeof formSchema>) {
+        const formData = {
+            subjectId: id,
+            subjectName: values.subjectName,
+            gradeRange: values.gradeRange,
+            schoolLevel: values.schoolLevel
+        }
+        try {
+            setIsLoading(true)
+            const response = await updateSubject(formData)
+            
+            if (response.success) {
+                setIsLoading(false)
+                toast.success('Subject updated successfully')
+                console.log("Data from database",response.data)
+            } else if(response.error) {
+                toast.error(response.error)
+            }
+        } catch (error) {
+            console.log({error})
+            toast.error('An error occurred while creating the subject')
+            
+        } finally {
             setIsLoading(false)
-            toast.success('Subject created successfully')
-            console.log("Data from database",response.data)
-        }    
-    } catch (error) {
-        console.log({error})
-        toast.error('An error occurred while creating the subject')
-        
-    } finally {
-        setIsLoading(false)
-        redirect('/dashboard/subjects')
+            redirect('/dashboard/subjects')
+        }
     }
-  }
-    
+
     return (
         <Card className='w-full max-w-4xl mx-auto'>
             <CardHeader>
-                <CardTitle>Create Subject</CardTitle>
+                <CardTitle>Edit Subject</CardTitle>
             </CardHeader>
             <CardContent className='p-6'>
                 <Form {... form}>
@@ -170,7 +184,7 @@ const CreateSubject = () => {
                             )}
                         />
                         <Button type="submit" className='w-full'>
-                            {isLoading ? <Loader2 className='size-4 animate-spin'/> : 'Create Subject'}
+                            {isLoading ? <Loader2 className='size-4 animate-spin'/> : 'Edit Subject'}
                         </Button>
                     </form>
                 </Form>
@@ -179,4 +193,4 @@ const CreateSubject = () => {
     )
 }
 
-export default CreateSubject
+export default EditSubject
