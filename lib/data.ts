@@ -1,6 +1,7 @@
 'use server'
 
 
+import { FileMetaData } from "@/components/FileExplorer"
 import { createClient } from "@/utils/supabase/server"
 
 const swapGradeRange = (gradeRange: string) => {
@@ -294,6 +295,27 @@ export const getSubFolders = async (folder: any, parentFolder?: string) => {
     return {
       success: true,
       data
+    }
+  } catch (error: any) {
+    console.error(error)
+    return {
+      success: false,
+      error: error.message
+    }
+  }
+}
+
+export const getFileMetaDta = async (file: string) => {
+  const supabase = await createClient()
+  try {
+    const {data, error} = await supabase.storage.from('pdfBucket').info(file)
+    if (error) {
+      throw error
+    }
+
+    return {
+      success: true,
+      data: data as FileMetaData
     }
   } catch (error: any) {
     console.error(error)
