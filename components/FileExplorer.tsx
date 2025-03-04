@@ -1,11 +1,15 @@
 "use client"
 import React from 'react'
 import { Button } from './ui/button'
-import { ArrowLeft, Folder, Loader, Loader2 } from 'lucide-react'
-import { getFileMetaDta, getSubFolders } from '@/lib/data'
+import { ArrowLeft, Clipboard, DownloadCloudIcon, File, Folder, Loader, Loader2, Trash2 } from 'lucide-react'
+import { deleteFile, downloadFile, getFileMetaDta, getSubFolders } from '@/lib/data'
 import { toast } from "sonner"
 import { Sheet, SheetClose, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle } from './ui/sheet'
 import { formatFileSize } from '@/lib/utils'
+import { Separator } from './ui/separator'
+import Image from 'next/image'
+import FileImage from '@/public/file.png'
+// import { URL } from 'url'
 
 interface FileObject {
     name: string;
@@ -25,6 +29,7 @@ const FileExplorer = ({ data }: { data: any }) => {
     const [loadingFolders, setLoadingFolders] = React.useState<Record<string, boolean>>({})
     const [pdfFileSelected, setPdfFileSelected] = React.useState<boolean>(false)
     const [fileMetaData, setFileMetaData] = React.useState<FileMetaData | null>(null)
+    const [isLoading, setIsLoading] = React.useState<boolean>(false)
 
     // Function to handle opening folders
     const handleOpenFolder = async (folderName: string, level: number) => {
@@ -175,17 +180,97 @@ const FileExplorer = ({ data }: { data: any }) => {
                             Past question papers are essential for learner practice and development.
                         </SheetDescription>
                     </SheetHeader>
-                    <div className='flex w-full my-3'>
+                    <div className='flex flex-col w-full my-3 gap-3'>
+                        <div className='w-full h-[50%] p-10 border-[1px] border-gray-400 rounded-md flex-1 items-center justify-center'>
+                            <div>
+                                <Image
+                                    src={FileImage}
+                                    alt='File'
+                                />
+                            </div>
+                        </div>
                         <h2 className='text-sm text-muted-foreground'>
                             {fileMetaData?.contentType} - {fileMetaData?.size !== undefined ? formatFileSize(fileMetaData.size) : 'Unknown size'} bytes
                         </h2>
 
+                        <div>
+                            <h2 className='text-xs text-muted-foreground'>Added on</h2>
+                            <p className='text-sm text-muted-foreground'>{fileMetaData?.createdAt}</p>
+                        </div>
+
+                        <div className='flex flex-row items-center justify-between gap-2'>
+                            <Button
+                                variant={'outline'}
+                                className='w-full'
+                                onClick={async () => {
+                                    const downloadedFile = await downloadFile(activeFolder!)
+
+                                    if(downloadedFile.success) {
+                                        toast.success('File downloaded successfully')
+                                        console.log(downloadedFile.data)
+                                        if (downloadedFile.data) {
+                                            const blob = new Blob([downloadedFile.data], {type: 'application/pdf'})
+                                            const blobURL = window.URL.createObjectURL(blob)
+                                            window.open(blobURL)
+                                        } else {
+                                            toast.error('Failed to download file')
+                                        }
+                                    }
+                                }}
+                            >
+                                <DownloadCloudIcon className='size-4'/>
+                                Download
+                            </Button>
+                            <Button
+                                variant={'outline'}
+                                className='w-full'
+                                onClick={() => {
+                                    navigator.clipboard.writeText(activeFolder!)
+                                    toast.success("Copied to clipboard")
+                                }}
+                            >
+                                <Clipboard className='size-4'/>
+                                Get URL
+                            </Button>
+                        </div>
+
+                        <Separator/>
+
+                        <div>
+                            <Button
+                                variant={'destructive'}
+                                className='w-full'
+                                onClick={async () => {
+                                    try {
+                                        setIsLoading(true)
+                                        const response = await deleteFile(activeFolder!)
+    
+                                        if(response.success) {
+                                            toast.success('File deleted successfully')
+                                            console.log(response.data)
+    
+                                        } else {
+                                            toast.error('Failed to delete file')
+                                            console.error(response.error)
+                                        }
+                                        
+                                    } catch (error) {
+                                        toast.error('Failed to delete file')
+                                        console.error(error)
+                                    } finally {
+                                        setIsLoading(false)
+                                        setPdfFileSelected(false)
+                                    }
+                                }}
+                            >
+                                {isLoading ? <Loader2 className='size-4 animate-spin' /> : <Trash2 className='size-4'/> }
+                                Delete
+                            </Button>
+                        </div>
+
+                        
+
                     </div>
-                    <SheetFooter>
-                    <SheetClose asChild>
-                        <Button type="submit">Download</Button>
-                    </SheetClose>
-                    </SheetFooter>
                 </SheetContent>
             </Sheet>
         </div>
