@@ -33,7 +33,9 @@ const PapersPage = async () => {
               <File size={20} />
               Create Folder 
             </Button>
-            <Button> 
+            <Button
+              
+            > 
               <CirclePlus size={20} />
               Add Paper 
             </Button>

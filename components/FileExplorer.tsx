@@ -97,182 +97,184 @@ const FileExplorer = ({ data }: { data: any }) => {
     
 
     return (
-        <div className='w-full'>
-            {/* Header */}
-            <div className='w-full h-[42px] bg-gray-400/45 rounded-t-md p-1 items-center'>
-                <div className='flex flex-row gap-2 items-center'>
-                    {folderStack.length > 0 && (
-                        <Button 
-                            variant='ghost' 
-                            className='rounded-full'
-                            onClick={handleGoBack}
-                        >
-                            <ArrowLeft className='size-3' />
-                        </Button>
-                    )}
-                    <p className='text-muted-foreground text-sm'>
-                        {activeFolder || 'Root'}
-                    </p>
+        <div className='flex flex-col p-3 w-full'>
+            <div className='w-full'>
+                {/* Header */}
+                <div className='w-full h-[42px] bg-gray-400/45 rounded-t-md p-1 items-center'>
+                    <div className='flex flex-row gap-2 items-center'>
+                        {folderStack.length > 0 && (
+                            <Button 
+                                variant='ghost' 
+                                className='rounded-full'
+                                onClick={handleGoBack}
+                            >
+                                <ArrowLeft className='size-3' />
+                            </Button>
+                        )}
+                        <p className='text-muted-foreground text-sm'>
+                            {activeFolder || 'Root'}
+                        </p>
+                    </div>
                 </div>
-            </div>
 
-            {data ? (
-                <div className='border border-gray-400/45 rounded-b-md overflow-x-auto overflow-y-hidden'>
-                    <div className='grid grid-cols-4 gap-2 p-2'>
-                        {/* Root Level Folders */}
-                        <div className='w-full'>
-                            {data.map((file: FileObject, index: number) => {
-                                const isLoading = loadingFolders[file.name];
-
-                                return (
-                                    <div
-                                        key={index}
-                                        onClick={() => handleOpenFolder(file.name, 0)}
-                                        className='flex flex-row items-center justify-between gap-2 p-2 border border-gray-400/45 rounded-md cursor-pointer'
-                                    >
-                                        <div className='flex flex-row gap-1'>
-                                            <Folder size={20} />
-                                            <p>{file.name}</p>
-                                        </div>
-                                        {isLoading && <Loader className='size-4 animate-spin' />}
-                                    </div>
-                                );
-                            })}
-                        </div>
-
-                        {/* Dynamically Render Subfolders for Each Level */}
-                        {folderStack.map((folders, level) => (
-                            <div key={level} className="w-full">
-                                {folders.map((file: FileObject, index: number) => {
-                                    const folderPath = `${selectedFolders.slice(0, level).join('/')}/${file.name}`;
-                                    const isLoading = loadingFolders[folderPath];
+                {data ? (
+                    <div className='border border-gray-400/45 rounded-b-md overflow-x-auto overflow-y-hidden'>
+                        <div className='grid grid-cols-4 gap-2 p-2'>
+                            {/* Root Level Folders */}
+                            <div className='w-full'>
+                                {data.map((file: FileObject, index: number) => {
+                                    const isLoading = loadingFolders[file.name];
 
                                     return (
                                         <div
                                             key={index}
-                                            onClick={() => handleOpenFolder(file.name, level + 1)}
+                                            onClick={() => handleOpenFolder(file.name, 0)}
                                             className='flex flex-row items-center justify-between gap-2 p-2 border border-gray-400/45 rounded-md cursor-pointer'
                                         >
                                             <div className='flex flex-row gap-1'>
                                                 <Folder size={20} />
                                                 <p>{file.name}</p>
                                             </div>
-                                            {isLoading && <Loader className='size-3 animate-spin' />}
+                                            {isLoading && <Loader className='size-4 animate-spin' />}
                                         </div>
                                     );
                                 })}
                             </div>
-                        ))}
-                    </div>
-                </div>
-            ) : (
-                <p>No folders available</p>
-            )}
 
-            <Sheet
-                open={pdfFileSelected}
-                onOpenChange={() => setPdfFileSelected(false)}
-            >
-                <SheetContent side={'right'}>
-                    <SheetHeader>
-                        <SheetTitle>{activeFolder?.split('/').pop()}</SheetTitle>
-                        <SheetDescription className='text-xs'>
-                            Past question papers are essential for learner practice and development.
-                        </SheetDescription>
-                    </SheetHeader>
-                    <div className='flex flex-col w-full my-3 gap-3'>
-                        <div className='w-full h-[50%] p-10 border-[1px] border-gray-400 rounded-md flex-1 items-center justify-center'>
-                            <div>
-                                <Image
-                                    src={FileImage}
-                                    alt='File'
-                                />
+                            {/* Dynamically Render Subfolders for Each Level */}
+                            {folderStack.map((folders, level) => (
+                                <div key={level} className="w-full">
+                                    {folders.map((file: FileObject, index: number) => {
+                                        const folderPath = `${selectedFolders.slice(0, level).join('/')}/${file.name}`;
+                                        const isLoading = loadingFolders[folderPath];
+
+                                        return (
+                                            <div
+                                                key={index}
+                                                onClick={() => handleOpenFolder(file.name, level + 1)}
+                                                className='flex flex-row items-center justify-between gap-2 p-2 border border-gray-400/45 rounded-md cursor-pointer'
+                                            >
+                                                <div className='flex flex-row gap-1'>
+                                                    <Folder size={20} />
+                                                    <p>{file.name}</p>
+                                                </div>
+                                                {isLoading && <Loader className='size-3 animate-spin' />}
+                                            </div>
+                                        );
+                                    })}
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                ) : (
+                    <p>No folders available</p>
+                )}
+
+                <Sheet
+                    open={pdfFileSelected}
+                    onOpenChange={() => setPdfFileSelected(false)}
+                >
+                    <SheetContent side={'right'}>
+                        <SheetHeader>
+                            <SheetTitle>{activeFolder?.split('/').pop()}</SheetTitle>
+                            <SheetDescription className='text-xs'>
+                                Past question papers are essential for learner practice and development.
+                            </SheetDescription>
+                        </SheetHeader>
+                        <div className='flex flex-col w-full my-3 gap-3'>
+                            <div className='w-full h-[50%] p-10 border-[1px] border-gray-400 rounded-md flex-1 items-center justify-center'>
+                                <div>
+                                    <Image
+                                        src={FileImage}
+                                        alt='File'
+                                    />
+                                </div>
                             </div>
-                        </div>
-                        <h2 className='text-sm text-muted-foreground'>
-                            {fileMetaData?.contentType} - {fileMetaData?.size !== undefined ? formatFileSize(fileMetaData.size) : 'Unknown size'} bytes
-                        </h2>
+                            <h2 className='text-sm text-muted-foreground'>
+                                {fileMetaData?.contentType} - {fileMetaData?.size !== undefined ? formatFileSize(fileMetaData.size) : 'Unknown size'} bytes
+                            </h2>
 
-                        <div>
-                            <h2 className='text-xs text-muted-foreground'>Added on</h2>
-                            <p className='text-sm text-muted-foreground'>{fileMetaData?.createdAt}</p>
-                        </div>
+                            <div>
+                                <h2 className='text-xs text-muted-foreground'>Added on</h2>
+                                <p className='text-sm text-muted-foreground'>{fileMetaData?.createdAt}</p>
+                            </div>
 
-                        <div className='flex flex-row items-center justify-between gap-2'>
-                            <Button
-                                variant={'outline'}
-                                className='w-full'
-                                onClick={async () => {
-                                    const downloadedFile = await downloadFile(activeFolder!)
+                            <div className='flex flex-row items-center justify-between gap-2'>
+                                <Button
+                                    variant={'outline'}
+                                    className='w-full'
+                                    onClick={async () => {
+                                        const downloadedFile = await downloadFile(activeFolder!)
 
-                                    if(downloadedFile.success) {
-                                        toast.success('File downloaded successfully')
-                                        console.log(downloadedFile.data)
-                                        if (downloadedFile.data) {
-                                            const blob = new Blob([downloadedFile.data], {type: 'application/pdf'})
-                                            const blobURL = window.URL.createObjectURL(blob)
-                                            window.open(blobURL)
-                                        } else {
-                                            toast.error('Failed to download file')
+                                        if(downloadedFile.success) {
+                                            toast.success('File downloaded successfully')
+                                            console.log(downloadedFile.data)
+                                            if (downloadedFile.data) {
+                                                const blob = new Blob([downloadedFile.data], {type: 'application/pdf'})
+                                                const blobURL = window.URL.createObjectURL(blob)
+                                                window.open(blobURL)
+                                            } else {
+                                                toast.error('Failed to download file')
+                                            }
                                         }
-                                    }
-                                }}
-                            >
-                                <DownloadCloudIcon className='size-4'/>
-                                Download
-                            </Button>
-                            <Button
-                                variant={'outline'}
-                                className='w-full'
-                                onClick={() => {
-                                    navigator.clipboard.writeText(activeFolder!)
-                                    toast.success("Copied to clipboard")
-                                }}
-                            >
-                                <Clipboard className='size-4'/>
-                                Get URL
-                            </Button>
-                        </div>
+                                    }}
+                                >
+                                    <DownloadCloudIcon className='size-4'/>
+                                    Download
+                                </Button>
+                                <Button
+                                    variant={'outline'}
+                                    className='w-full'
+                                    onClick={() => {
+                                        navigator.clipboard.writeText(activeFolder!)
+                                        toast.success("Copied to clipboard")
+                                    }}
+                                >
+                                    <Clipboard className='size-4'/>
+                                    Get URL
+                                </Button>
+                            </div>
 
-                        <Separator/>
+                            <Separator/>
 
-                        <div>
-                            <Button
-                                variant={'destructive'}
-                                className='w-full'
-                                onClick={async () => {
-                                    try {
-                                        setIsLoading(true)
-                                        const response = await deleteFile(activeFolder!)
-    
-                                        if(response.success) {
-                                            toast.success('File deleted successfully')
-                                            console.log(response.data)
-    
-                                        } else {
+                            <div>
+                                <Button
+                                    variant={'destructive'}
+                                    className='w-full'
+                                    onClick={async () => {
+                                        try {
+                                            setIsLoading(true)
+                                            const response = await deleteFile(activeFolder!)
+        
+                                            if(response.success) {
+                                                toast.success('File deleted successfully')
+                                                console.log(response.data)
+        
+                                            } else {
+                                                toast.error('Failed to delete file')
+                                                console.error(response.error)
+                                            }
+                                            
+                                        } catch (error) {
                                             toast.error('Failed to delete file')
-                                            console.error(response.error)
+                                            console.error(error)
+                                        } finally {
+                                            setIsLoading(false)
+                                            setPdfFileSelected(false)
                                         }
-                                        
-                                    } catch (error) {
-                                        toast.error('Failed to delete file')
-                                        console.error(error)
-                                    } finally {
-                                        setIsLoading(false)
-                                        setPdfFileSelected(false)
-                                    }
-                                }}
-                            >
-                                {isLoading ? <Loader2 className='size-4 animate-spin' /> : <Trash2 className='size-4'/> }
-                                Delete
-                            </Button>
+                                    }}
+                                >
+                                    {isLoading ? <Loader2 className='size-4 animate-spin' /> : <Trash2 className='size-4'/> }
+                                    Delete
+                                </Button>
+                            </div>
+
+                            
+
                         </div>
-
-                        
-
-                    </div>
-                </SheetContent>
-            </Sheet>
+                    </SheetContent>
+                </Sheet>
+            </div>             
         </div>
     );
 }
