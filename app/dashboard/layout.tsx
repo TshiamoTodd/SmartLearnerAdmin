@@ -21,7 +21,7 @@ const DashboardLayout = ({children}: {children: ReactNode}) => {
                                 alt='logo'
                                 className='size-7' 
                             />
-                            <p className='text-xl font-thin'>Invoice<span className='text-blue-600 font-thin'>Dome</span></p>
+                            <p className='text-xl font-thin'>Smart<span className='text-blue-600 font-thin'>Learner</span></p>
                         </Link>
                     </div>
                     <div className='flex-1'>

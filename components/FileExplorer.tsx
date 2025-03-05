@@ -1,14 +1,27 @@
 "use client"
 import React from 'react'
 import { Button } from './ui/button'
-import { ArrowLeft, Clipboard, DownloadCloudIcon, File, Folder, Loader, Loader2, Trash2 } from 'lucide-react'
-import { deleteFile, downloadFile, getFileMetaDta, getSubFolders } from '@/lib/data'
+import { ArrowLeft, CirclePlus, Clipboard, DownloadCloudIcon, File, Folder, Loader, Loader2, Trash2 } from 'lucide-react'
+import { deleteFile, downloadFile, getFileMetaDta, getSubFolders, uploadFile } from '@/lib/data'
 import { toast } from "sonner"
 import { Sheet, SheetClose, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle } from './ui/sheet'
 import { formatFileSize } from '@/lib/utils'
 import { Separator } from './ui/separator'
 import Image from 'next/image'
 import FileImage from '@/public/file.png'
+import { Card, CardDescription } from './ui/card'
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+  } from "@/components/ui/dialog"
+import { Label } from './ui/label'
+import { Input } from './ui/input'
+import { ALLOWED_TYPES, MAX_FILE_SIZE } from '@/constants'
 // import { URL } from 'url'
 
 interface FileObject {
@@ -30,6 +43,7 @@ const FileExplorer = ({ data }: { data: any }) => {
     const [pdfFileSelected, setPdfFileSelected] = React.useState<boolean>(false)
     const [fileMetaData, setFileMetaData] = React.useState<FileMetaData | null>(null)
     const [isLoading, setIsLoading] = React.useState<boolean>(false)
+    const [isUloapding, setIsUploading] = React.useState<boolean>(false)
 
     // Function to handle opening folders
     const handleOpenFolder = async (folderName: string, level: number) => {
@@ -94,10 +108,89 @@ const FileExplorer = ({ data }: { data: any }) => {
         }
     }
 
+    const handleUpload = async (formData: FormData) => {
+        try {
+            setIsUploading(true)
+            const file = formData.get('file') as File
+            const response = await uploadFile(file, activeFolder || '')
+
+            if(response.success) {
+                toast.success('File uploaded successfully')
+                console.log(response.data)
+            } else {
+                toast.error('Failed to upload file')
+                console.error(response.error)
+            }
+        } catch (error) {
+            toast.error('Failed to upload file')
+            console.error(error)
+        } finally {
+            setIsUploading(false)
+        }
+    }
+
     
 
     return (
         <div className='flex flex-col p-3 w-full'>
+            <Card className='w-full p-5 mb-2'>
+                <CardDescription className='flex flex-row items-center justify-between'>
+                <div>
+                    <h2 className='text-2xl font-bold'>
+                        Past Question Papers
+                    </h2>
+                    <p className='text-[12px] font-thin'>
+                        Add, view and manage past question papers
+                    </p>
+                </div>
+
+                <div className='flex gap-3'>
+                    <Button variant={'outline'} className='border border-gray-300'>
+                        <File size={20} />
+                        Create Folder 
+                    </Button>
+
+                    <Dialog>
+                        <DialogTrigger asChild>
+                            <Button variant="default">
+                                <CirclePlus size={20} />
+                                Add Paper
+                            </Button>
+                        </DialogTrigger>
+                        <DialogContent className="sm:max-w-[425px]">
+                            <form action={handleUpload}>
+                                <DialogHeader>
+                                    <DialogTitle>Upload Past Papers</DialogTitle>
+                                    <DialogDescription>
+                                        Your file will be uploaded to this directory: <br />
+                                        <span className="font-semibold"> /{activeFolder || 'Root'}</span>
+                                    </DialogDescription>
+                                </DialogHeader>
+                                    <div className="grid gap-4 py-4">
+                                        <div className="border-2 border-dashed border-[#44475a] rounded-lg p-6 bg-[#1e1f29]">
+                                            <input
+                                                name="file"
+                                                type="file"
+                                                accept={Object.keys(ALLOWED_TYPES).join(",")}
+                                                className="text-[#f8f8f2] file:p-2 file:rounded-lg file:border-0 file:bg-[#bd93f9] hover:file:bg-[#ff79c6]"
+                                            />
+                                            <p className="mt-2 text-[#6272a4]">
+                                                Max file size: {formatFileSize(MAX_FILE_SIZE)}
+                                            </p>
+                                        </div>
+                                    </div>
+                                <DialogFooter>
+                                    <Button type="submit">
+                                        {isUloapding ? <Loader2 className='size-4 animate-spin' /> : 'Upload'}
+                                    </Button>
+                                </DialogFooter>
+                            </form>
+                        </DialogContent>
+                    </Dialog>
+                </div>
+                </CardDescription>
+            </Card>
+
             <div className='w-full'>
                 {/* Header */}
                 <div className='w-full h-[42px] bg-gray-400/45 rounded-t-md p-1 items-center'>

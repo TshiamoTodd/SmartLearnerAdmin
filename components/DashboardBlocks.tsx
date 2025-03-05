@@ -12,7 +12,7 @@ const DashboardBlocks = async () => {
     const { data: subjects } = await supabase.from('Subject').select('subject_name')
     const subjectCount = subjects ? subjects.length : 0
 
-    const { data: pdfs, error: pdfError } = await supabase.from('storage.objects').select('name')
+    const { data: pdfs, error: pdfError } = await supabase.storage.from('pdfBucket').list('')
     console.log(pdfs)
     console.log(pdfError)
 

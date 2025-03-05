@@ -369,3 +369,24 @@ export const deleteFile = async (file: string) => {
     }
   }
 }
+
+export const uploadFile = async (file: File, folder: string) => {
+  const supabase = await createClient()
+  try {
+    const {data, error} = await supabase.storage.from('pdfBucket').upload(`${folder}/${file.name}`, file)
+    if (error) {
+      throw error
+    }
+
+    return {
+      success: true,
+      data
+    }
+  } catch (error: any) {
+    console.error(error)
+    return {
+      success: false,
+      error: error.message
+    }
+  }
+}
