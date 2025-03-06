@@ -1,5 +1,5 @@
 'use client'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import { Button } from '@/components/ui/button'
@@ -15,6 +15,16 @@ function Login() {
     const [password, setPassword] = useState('')
     const [error, setError] = useState('')
 
+    useEffect(() => {
+        const checkSession = async () => {
+            const { data: sessionData } = await supabase.auth.getSession()
+            if (sessionData?.session) {
+                router.push('/dashboard')
+            }
+        }
+        checkSession()
+    }, [])
+
     const handleLogin = async () => {
         setError('') 
 
@@ -28,8 +38,14 @@ function Login() {
             return
         }
 
+        const { data: session } = await supabase.auth.getSession()
+
+        if (!session) {
+            setError('Session not started. Please try again.')
+            return
+        }
+
         if (data.user) {
-            
             const { data: userRole, error: roleError } = await supabase
                 .from('User')
                 .select('role')

@@ -17,9 +17,18 @@ const DashboardLayout = ({ children }: { children: ReactNode }) => {
   const supabase = createClientComponentClient()
 
   const handleLogout = async () => {
-    await supabase.auth.signOut()
-    router.push('/') 
+    const { error } = await supabase.auth.signOut() // End session and sign out
+    if (error) {
+      console.error("Logout Error:", error.message)
+      return
+    }
+    
+    localStorage.removeItem("supabase.auth.token")
+    sessionStorage.removeItem("supabase.auth.token")
+  
+    router.push('/')
   }
+  
 
   return (
     <>
