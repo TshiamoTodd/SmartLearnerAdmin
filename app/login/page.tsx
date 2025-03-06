@@ -1,47 +1,33 @@
 'use client'
 import { useState } from 'react'
-import { useRouter } from 'next/navigation'
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { Loader2 } from 'lucide-react'
+import { login } from './actions'
+import { toast } from 'sonner'
 
 function Login() {
-    const supabase = createClientComponentClient()
-    const router = useRouter()
 
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
     const [error, setError] = useState('')
+    const [loading, setLoading] = useState(false)
 
     const handleLogin = async () => {
-        setError('') 
+        try {
+            setLoading(true)
+            const response = await login({email, password})
 
-        const { data, error } = await supabase.auth.signInWithPassword({
-            email,
-            password
-        })
-
-        if (error) {
-            setError('Invalid email or password')
-            return
-        }
-
-        if (data.user) {
-            
-            const { data: userRole, error: roleError } = await supabase
-                .from('User')
-                .select('role')
-                .eq('id', data.user.id)
-                .single()
-
-            if (roleError || !userRole || userRole.role !== 'Admin') {
-                setError('Access denied. Only admins can log in.')
+            if (!response!.success) {
+                setError(response!.error)
+                toast.error(response!.error)
+                setLoading(false)
                 return
             }
-
-            router.push('/dashboard')
+        } catch (error) {
+            toast.error('An error occurred. Please try again.')
         }
     }
 
@@ -82,7 +68,7 @@ function Login() {
                         {error && <p className="text-red-500 text-sm mb-2">{error}</p>}
 
                         <Button className='w-full' onClick={handleLogin}>
-                            Login
+                            {loading ? <Loader2 className='size-4 animate-spin'/> : 'Login'}
                         </Button>
                     </CardContent>
                 </Card>
